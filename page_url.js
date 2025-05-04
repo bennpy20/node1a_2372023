@@ -28,18 +28,20 @@ var server = http.createServer((req, res) => {
     };
 
     // Kalau diminta file css/js/gambar/font
+    // Kalau ada ekstensi file, maka layani file statis
     if (extname) {
-        fs.readFile('.' + pathname, (err, data) => {
+        const filePath = path.join(__dirname, pathname);
+        fs.readFile(filePath, (err, data) => {
             if (err) {
-                res.writeHead(404, {'Content-Type': 'text/plain'});
-                return res.end('File not found');
+                res.writeHead(404, { 'Content-Type': 'text/plain' });
+                return res.end('File not found: ' + filePath);
             }
-            res.writeHead(200, {'Content-Type': contentTypes[extname] || 'application/octet-stream'});
-            res.write(data);
-            return res.end();
+            res.writeHead(200, { 'Content-Type': contentTypes[extname] || 'application/octet-stream' });
+            res.end(data);
         });
         return;
     }
+
 
     // Kalau diminta HTML
     let menu = q.query.menu;
@@ -51,14 +53,34 @@ var server = http.createServer((req, res) => {
 
     switch (menu) {
         case '/':
+            fileLocation = 'login/index.html';
+            break;
         case 'dashboard':
-            fileLocation = 'content/examples/dashboard.html';
+            fileLocation = 'content/admin/dashboard.html';
             break;
         case 'mahasiswa':
-            fileLocation = 'content/examples/mahasiswa.html';
+            fileLocation = 'content/admin/mahasiswa.html';
             break;
-        case 'user':
-            fileLocation = 'content/examples/user.html';
+        case 'dosen':
+            fileLocation = 'content/admin/dosen.html';
+            break;
+        case 'mahasiswa_add':
+            fileLocation = 'content/admin/mahasiswa_add.html';
+            break;
+        case 'dosen_add':
+            fileLocation = 'content/admin/dosen_add.html';
+            break;
+        case 'dsn-dashboard':
+            fileLocation = 'content/dosen/dashboard.html';
+            break;
+        case 'dsn-mahasiswa':
+            fileLocation = 'content/dosen/mahasiswa.html';
+            break;
+        case 'dsn-mahasiswa_add':
+            fileLocation = 'content/dosen/mahasiswa_add.html';
+            break;
+        case 'mhs-dashboard':
+            fileLocation = 'content/mahasiswa/dashboard.html';
             break;
         default:
             fileLocation = 'login/index.html'; // fallback
